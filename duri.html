@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>두리의 스크랩북 🐾</title>
+<style>
+  :root {
+    --paper: #fdf6ec;
+    --ink: #4a3426;
+    --accent: #e8836b;
+    --sky: #cfe6f3;
+    --leaf: #c9e4c5;
+    --sun: #ffe4a1;
+    --rose: #f7c6cf;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Jua", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    color: var(--ink); background: var(--paper); line-height: 1.7;
+    background-image: linear-gradient(rgba(232,131,107,.08) 1px, transparent 1px);
+    background-size: 100% 32px;
+  }
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 6vw; }
+
+  /* 상단 */
+  .top { padding: 56px 0 30px; display: grid; grid-template-columns: 220px 1fr; gap: 36px; align-items: center; }
+  .polaroid {
+    background: #fff; padding: 12px 12px 36px; box-shadow: 0 10px 24px rgba(74,52,38,.25);
+    transform: rotate(-4deg); text-align: center; position: relative;
+  }
+  .polaroid::before { content: ""; position: absolute; top: -14px; left: 50%; width: 80px; height: 26px; margin-left: -40px; background: rgba(247,198,207,.85); transform: rotate(3deg); }
+  .polaroid .pic { height: 190px; background: var(--sun); display: flex; align-items: center; justify-content: center; font-size: 5.5rem; background-size: cover; background-position: center; }
+  .polaroid small { display: block; margin-top: 8px; }
+  .top h1 { font-size: clamp(2.2rem, 7vw, 3.6rem); line-height: 1.2; }
+  .top h1 em { color: var(--accent); font-style: normal; }
+  .top p { margin-top: 10px; font-size: 1.1rem; }
+  .chips { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { padding: 4px 14px; border-radius: 999px; background: var(--leaf); font-size: .92rem; }
+
+  h2 { font-size: 1.7rem; margin: 46px 0 6px; }
+  h2::after { content: ""; display: block; width: 70px; height: 5px; margin-top: 4px; background: var(--accent); border-radius: 3px; }
+  .sub { margin-bottom: 20px; font-size: .95rem; opacity: .8; }
+
+  /* 프로필 */
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
+  .fact { background: #fff; border-radius: 14px; padding: 16px 18px; border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); font-family: inherit; text-align: left; color: inherit; font-size: 1rem; }
+  .fact b { display: block; font-size: .85rem; color: var(--accent); }
+  button.fact { cursor: pointer; background: var(--sun); transition: transform .15s; }
+  button.fact:hover { transform: translate(-2px, -2px) rotate(-1deg); }
+
+  /* 코너 */
+  .corners { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 24px; padding-top: 10px; }
+  .corner { background: #fff; padding: 10px 10px 16px; box-shadow: 0 8px 18px rgba(74,52,38,.2); cursor: pointer; border: 0; font-family: inherit; color: inherit; text-align: center; transition: transform .2s; }
+  .corner:nth-child(odd) { transform: rotate(-2deg); }
+  .corner:nth-child(even) { transform: rotate(2deg); }
+  .corner:hover { transform: rotate(0) scale(1.05); }
+  .corner .pic { height: 150px; display: flex; align-items: center; justify-content: center; font-size: 3.4rem; background-size: cover; background-position: center; }
+  .corner:nth-child(1) .pic { background-color: var(--rose); }
+  .corner:nth-child(2) .pic { background-color: var(--leaf); }
+  .corner:nth-child(3) .pic { background-color: var(--sun); }
+  .corner:nth-child(4) .pic { background-color: var(--sky); }
+  .corner h3 { margin-top: 10px; font-size: 1.1rem; }
+  .corner p { font-size: .88rem; opacity: .8; }
+
+  /* 일기/좋아요 */
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .note { padding: 20px 24px; border-radius: 6px; box-shadow: 3px 5px 0 rgba(74,52,38,.2); }
+  .note.a { background: var(--sun); transform: rotate(-1deg); }
+  .note.b { background: var(--sky); transform: rotate(1deg); }
+  .note li { margin-left: 20px; }
+  .diary { background: #fffef8; padding: 22px 26px; border-left: 6px solid var(--accent); box-shadow: 3px 5px 0 rgba(74,52,38,.15); }
+
+  footer { text-align: center; padding: 50px 0 70px; }
+  footer a { color: var(--accent); text-decoration: underline; }
+
+  /* 팝업 */
+  .modal { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(74,52,38,.7); }
+  .modal.open { display: flex; }
+  .mbox { position: relative; width: min(680px, 100%); max-height: 92vh; overflow: auto; background: var(--paper); border-radius: 12px; padding: 24px; animation: pop .25s ease; }
+  @keyframes pop { from { transform: scale(.85) rotate(-2deg); opacity: 0; } }
+  .close { position: absolute; top: 10px; right: 12px; width: 34px; height: 34px; border: 2px solid var(--ink); border-radius: 50%; background: #fff; cursor: pointer; }
+  .mbox h3 { font-size: 1.5rem; margin-bottom: 12px; padding-right: 40px; }
+  .mbox img { display: block; width: 100%; border: 10px solid #fff; box-shadow: 0 6px 16px rgba(0,0,0,.25); }
+  .mbox iframe { width: 100%; height: 380px; border: 0; }
+  .cap { margin-top: 12px; text-align: center; }
+  .empty { padding: 40px 18px; text-align: center; border: 3px dashed var(--accent); background: #fff; }
+  .empty code { background: var(--sun); padding: 2px 8px; border-radius: 6px; }
+  .gifts { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; margin: 14px 0; }
+  .gift { padding: 14px 6px; border: 2px solid var(--ink); border-radius: 12px; background: #fff; box-shadow: 3px 3px 0 var(--ink); font-family: inherit; font-size: 1rem; cursor: pointer; transition: transform .15s; }
+  .gift:hover { transform: translate(-2px, -2px); }
+  .gift span { display: block; font-size: 2.2rem; }
+  .reaction { min-height: 100px; padding: 16px; background: var(--sun); text-align: center; border-radius: 12px; }
+  .reaction .big { display: block; font-size: 3rem; animation: bob 1s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(-8px); } }
+
+  @media (max-width: 640px) {
+    .top { grid-template-columns: 1fr; text-align: center; }
+    .polaroid { max-width: 220px; margin: 0 auto; }
+    .chips { justify-content: center; }
+    .two { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="polaroid">
+      <div class="pic" id="mainpic">🐶</div>
+      <small>두리 ♡ 코카스파니엘</small>
+    </div>
+    <div>
+      <h1>안녕, 나는 <em>두리</em>야!</h1>
+      <p>전남 강진에서 사는 우리 집 귀염둥이 코카스파니엘이에요. 내 스크랩북 구경하고 가세요 🐾</p>
+      <div class="chips"><span class="chip">🎀 애교쟁이</span><span class="chip">👂 찰랑 귀털</span><span class="chip">🍗 간식 대장</span></div>
+    </div>
+  </header>
+
+  <h2>두리 프로필</h2>
+  <p class="sub">노란 카드는 눌러볼 수 있어요!</p>
+  <div class="facts">
+    <div class="fact"><b>이름</b>두리</div>
+    <div class="fact"><b>견종</b>코카스파니엘</div>
+    <div class="fact"><b>성격</b>활발하고 사람을 좋아해요</div>
+    <button class="fact" onclick="openMap()"><b>사는 곳 📍</b>전남 강진 (지도 보기)</button>
+    <button class="fact" onclick="openGift()"><b>생일 🎂</b>생일선물 주러 가기</button>
+  </div>
+
+  <h2>두리의 하루</h2>
+  <p class="sub">사진을 누르면 두리의 실제 모습이 크게 나와요.</p>
+  <div class="corners">
+    <button class="corner" onclick="openRoom(0)"><div class="pic">🛏️</div><h3>낮잠 코너</h3><p>쿨쿨 자는 모습</p></button>
+    <button class="corner" onclick="openRoom(1)"><div class="pic">🥣</div><h3>식사 코너</h3><p>냠냠 먹는 모습</p></button>
+    <button class="corner" onclick="openRoom(2)"><div class="pic">🎾</div><h3>놀이 코너</h3><p>신나게 노는 모습</p></button>
+    <button class="corner" onclick="openRoom(3)"><div class="pic">🌙</div><h3>밤 하우스</h3><p>아늑한 잠자리</p></button>
+  </div>
+
+  <h2>두리 취향</h2>
+  <p class="sub">&nbsp;</p>
+  <div class="two">
+    <div class="note a"><b>😍 좋아해요</b><ul><li>산책과 냄새 맡기</li><li>닭가슴살 간식</li><li>공 던지기</li><li>무릎 위 낮잠</li></ul></div>
+    <div class="note b"><b>😤 싫어해요</b><ul><li>목욕 시간</li><li>발톱 깎기</li><li>혼자 집 지키기</li><li>간식 안 주는 사람</li></ul></div>
+  </div>
+
+  <h2>오늘의 일기</h2>
+  <p class="sub">&nbsp;</p>
+  <div class="diary">
+    <b>○월 ○일 · 맑음 ☀️</b><br>
+    산책 두 번 갔다. 풀 냄새가 최고였다. 간식을 하나 더 달라고 눈을 크게 떴더니 줬다. 역시 나는 천재다. 이제 낮잠 잘 거다. 멍.
+  </div>
+
+  <footer>우리 가족의 보물, 두리 💖<br><a href="index.html">← 제주도 관광 페이지로</a></footer>
+</div>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="mbox">
+    <button class="close" onclick="closeModal()" aria-label="닫기">✕</button>
+    <div id="mc"></div>
+  </div>
+</div>
+
+<script>
+  // 두리 실제 사진은 photos 폴더에 아래 이름으로 넣어주세요
+  var ROOMS = [
+    { t: "😴 낮잠 코너", p: "photos/nap.jpg",   c: "쿨쿨... 낮잠 자는 두리" },
+    { t: "🍗 식사 코너", p: "photos/eat.jpg",   c: "냠냠! 맛있게 먹는 두리" },
+    { t: "🎾 놀이 코너", p: "photos/play.jpg",  c: "신나게 노는 두리" },
+    { t: "🌙 밤 하우스", p: "photos/night.jpg", c: "아늑한 밤 하우스의 두리" }
+  ];
+  var modal = document.getElementById("modal"), mc = document.getElementById("mc");
+  function show(h) { mc.innerHTML = h; modal.classList.add("open"); }
+  function closeModal() { modal.classList.remove("open"); mc.innerHTML = ""; }
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeModal(); });
+
+  function openRoom(i) {
+    var r = ROOMS[i];
+    show('<h3>' + r.t + '</h3><img src="' + r.p + '" alt="' + r.c +
+      '" onerror="this.outerHTML=\'<div class=empty>🐶📷<br>아직 사진이 없어요!<br><code>' + r.p + '</code> 로 두리 사진을 넣어주세요</div>\'">' +
+      '<p class="cap">' + r.c + '</p>');
+  }
+  function openMap() {
+    show('<h3>📍 두리가 사는 곳: 전라남도 강진</h3>' +
+      '<iframe src="https://www.google.com/maps?q=%EC%A0%84%EB%82%A8+%EA%B0%95%EC%A7%84&output=embed" loading="lazy" allowfullscreen></iframe>' +
+      '<p class="cap">청자와 남도 바다의 고장, 강진 🐾</p>');
+  }
+
+  var GIFTS = [
+    { e: "🍗", n: "닭가슴살", r: "꼬리 붕붕! 냠냠냠 😋", d: "🐶" },
+    { e: "🎾", n: "테니스공", r: "던져줘 던져줘! 🎾", d: "🐕" },
+    { e: "🧸", n: "곰인형", r: "새 친구다! 하루종일 물고 다닐래 🥰", d: "🐶" },
+    { e: "🦴", n: "뼈 간식", r: "소중하니까 숨겨둘 거야 🤫", d: "🐕" },
+    { e: "🎀", n: "리본", r: "나 예뻐? 귀에 달아줘! 💖", d: "🐩" },
+    { e: "🎂", n: "강아지 케이크", r: "생일 축하해 두리야! 🎉", d: "🥳" }
+  ], given = 0;
+  function openGift() {
+    given = 0;
+    show('<h3>🎁 두리 생일선물 주기</h3><p>주고 싶은 선물을 골라 보세요!</p><div class="gifts">' +
+      GIFTS.map(function (g, i) { return '<button class="gift" onclick="giveGift(' + i + ')"><span>' + g.e + '</span>' + g.n + '</button>'; }).join("") +
+      '</div><div class="reaction" id="rx">선물을 눌러주세요 👆</div>');
+  }
+  function giveGift(i) {
+    var g = GIFTS[i]; given++;
+    document.getElementById("rx").innerHTML = '<span class="big">' + g.d + '</span>' + g.r + '<br><small>받은 선물: ' + given + '개 🎉</small>';
+  }
+
+  // 사진이 있으면 썸네일로 사용
+  function useThumb(el, src) {
+    var im = new Image();
+    im.onload = function () { el.style.backgroundImage = "url(" + src + ")"; el.textContent = ""; };
+    im.src = src;
+  }
+  document.querySelectorAll(".corner .pic").forEach(function (el, i) { useThumb(el, ROOMS[i].p); });
+  useThumb(document.getElementById("mainpic"), "photos/duri.jpg"); // 대표 사진
+</script>
+</body>
+</html>
