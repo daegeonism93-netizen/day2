@@ -1,0 +1,7 @@
+# 로컬 전용 (원격에는 올리지 않음)
+vjeju/
+.venv/
+my_api/
+__pycache__/
+.env
+.env.*
