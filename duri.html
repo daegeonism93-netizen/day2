@@ -25,7 +25,51 @@
   .wrap { max-width: 1020px; margin: 0 auto; padding: 0 6vw; }
 
   /* 상단 */
-  .top { padding: 56px 0 30px; display: grid; grid-template-columns: 220px 1fr; gap: 36px; align-items: center; }
+  /* 움직이는 사진: 같은 사진을 겹쳐 머리 부분만 부드럽게 오려 움직입니다 */
+  .live { position: relative; aspect-ratio: 1 / 1; overflow: hidden; background: #eee; }
+  .live img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .live .base { animation: breathe 5s ease-in-out infinite; transform-origin: 50% 70%; }
+  .live .layer { will-change: transform; }
+  /* 두리 머리: 갸우뚱 + 끄덕 */
+  .duri-head {
+    -webkit-mask-image: radial-gradient(ellipse 21% 21% at 54% 47%, #000 55%, transparent 100%);
+            mask-image: radial-gradient(ellipse 21% 21% at 54% 47%, #000 55%, transparent 100%);
+    transform-origin: 56% 72%;
+    animation: tilt 3.2s ease-in-out infinite;
+  }
+  /* 두리 혀: 낼름낼름 */
+  .duri-tongue {
+    -webkit-mask-image: radial-gradient(ellipse 7% 8% at 45.5% 50%, #000 50%, transparent 100%);
+            mask-image: radial-gradient(ellipse 7% 8% at 45.5% 50%, #000 50%, transparent 100%);
+    transform-origin: 45.5% 47%;
+    animation: lick 1.1s ease-in-out infinite, tilt 3.2s ease-in-out infinite;
+  }
+  /* 포메라니안 머리: 신나서 까딱까딱 */
+  .pom-head {
+    -webkit-mask-image: radial-gradient(ellipse 20% 19% at 17% 62%, #000 55%, transparent 100%);
+            mask-image: radial-gradient(ellipse 20% 19% at 17% 62%, #000 55%, transparent 100%);
+    transform-origin: 14% 82%;
+    animation: bounce 1.4s ease-in-out infinite;
+  }
+  @keyframes breathe { 50% { transform: scale(1.04); } }
+  @keyframes tilt {
+    0%, 100% { transform: rotate(-3.5deg) translateY(0); }
+    50%      { transform: rotate(3.5deg) translateY(-6px); }
+  }
+  @keyframes lick {
+    0%, 100% { scale: 1 1; }
+    50%      { scale: 1.12 1.22; }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: rotate(-5deg) translateY(0); }
+    30%      { transform: rotate(4deg) translateY(-9px); }
+    60%      { transform: rotate(-2deg) translateY(-3px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .live .base, .live .layer { animation: none; }
+  }
+
+  .top { padding: 56px 0 30px; display: grid; grid-template-columns: 260px 1fr; gap: 36px; align-items: center; }
   .polaroid {
     background: #fff; padding: 12px 12px 36px; box-shadow: 0 10px 24px rgba(74,52,38,.25);
     transform: rotate(-4deg); text-align: center; position: relative;
@@ -97,7 +141,7 @@
 
   @media (max-width: 640px) {
     .top { grid-template-columns: 1fr; text-align: center; }
-    .polaroid { max-width: 220px; margin: 0 auto; }
+    .polaroid { max-width: 260px; margin: 0 auto; }
     .chips { justify-content: center; }
     .two { grid-template-columns: 1fr; }
   }
@@ -108,7 +152,12 @@
 
   <header class="top">
     <div class="polaroid">
-      <div class="pic" id="mainpic">🐶</div>
+      <div class="live" aria-label="두리와 친구 포메라니안이 움직이는 사진">
+        <img class="base" src="photos/duri.jpg" alt="두리와 포메라니안">
+        <img class="layer duri-head" src="photos/duri.jpg" alt="" aria-hidden="true">
+        <img class="layer duri-tongue" src="photos/duri.jpg" alt="" aria-hidden="true">
+        <img class="layer pom-head" src="photos/duri.jpg" alt="" aria-hidden="true">
+      </div>
       <small>두리 ♡ 코카스파니엘</small>
     </div>
     <div>
@@ -212,7 +261,6 @@
     im.src = src;
   }
   document.querySelectorAll(".corner .pic").forEach(function (el, i) { useThumb(el, ROOMS[i].p); });
-  useThumb(document.getElementById("mainpic"), "photos/duri.jpg"); // 대표 사진
 </script>
 </body>
 </html>
